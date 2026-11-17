@@ -12,6 +12,9 @@ import ChatScreen from './src/screens/ChatScreen';
 import UserScreen from './src/screens/UserScreen';
 import ReviewScreen from './src/screens/ReviewScreen';
 import PhotosScreen from './src/screens/PhotosScreen';
+import BlockedScreen from './src/screens/BlockedScreen';
+import { navigationRef } from './src/navigation/ref';
+import { NotificationsProvider } from './src/notifications';
 
 const Stack = createNativeStackNavigator();
 
@@ -19,9 +22,11 @@ export default function App() {
   return (
     <SafeAreaProvider>
       <StatusBar barStyle="dark-content" />
-      <NavigationContainer>
+      <NotificationsProvider>
+      <NavigationContainer ref={navigationRef}>
         <Stack.Navigator screenOptions={{ headerShown: false }}>
           <Stack.Screen name="Login" component={LoginScreen} />
+          <Stack.Screen name="Blocked" component={BlockedScreen} />
           <Stack.Screen name="Main" component={Tabs} />
           <Stack.Screen name="Listing" component={ListingScreen} />
           <Stack.Screen
@@ -39,6 +44,7 @@ export default function App() {
           />
         </Stack.Navigator>
       </NavigationContainer>
+      </NotificationsProvider>
     </SafeAreaProvider>
   );
 }

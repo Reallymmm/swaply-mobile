@@ -8,6 +8,7 @@ import FavoritesScreen from '../screens/FavoritesScreen';
 import ChatsScreen from '../screens/ChatsScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 import { colors } from '../theme';
+import { useNotifications } from '../notifications';
 
 const Tab = createBottomTabNavigator();
 
@@ -25,6 +26,7 @@ function icon(outline, filled) {
 }
 
 export default function Tabs() {
+  const { unreadMessages, unreadOther } = useNotifications();
   return (
     <Tab.Navigator
       screenOptions={{
@@ -75,12 +77,20 @@ export default function Tabs() {
       <Tab.Screen
         name="Chats"
         component={ChatsScreen}
-        options={{ tabBarLabel: 'Чаты', tabBarIcon: icon('chatbubble-outline', 'chatbubble') }}
+        options={{
+          tabBarLabel: 'Чаты',
+          tabBarIcon: icon('chatbubble-outline', 'chatbubble'),
+          tabBarBadge: unreadMessages > 0 ? unreadMessages : undefined,
+        }}
       />
       <Tab.Screen
         name="Profile"
         component={ProfileScreen}
-        options={{ tabBarLabel: 'Профиль', tabBarIcon: icon('person-outline', 'person') }}
+        options={{
+          tabBarLabel: 'Профиль',
+          tabBarIcon: icon('person-outline', 'person'),
+          tabBarBadge: unreadOther > 0 ? unreadOther : undefined,
+        }}
       />
     </Tab.Navigator>
   );

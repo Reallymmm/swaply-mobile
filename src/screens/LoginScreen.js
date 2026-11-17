@@ -24,7 +24,12 @@ export default function LoginScreen({ navigation }) {
       setToken(res.token);
       navigation.replace('Main');
     } catch (e) {
-      Alert.alert('Не получилось', e.message);
+      if (!isRegister && e.status === 403) {
+        // аккаунт заблокирован: показываем причину и форму апелляции
+        navigation.navigate('Blocked', { email: email.trim(), password });
+      } else {
+        Alert.alert('Не получилось', e.message);
+      }
     } finally {
       setBusy(false);
     }

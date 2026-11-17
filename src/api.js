@@ -5,6 +5,9 @@ let token = null;
 export function setToken(value) {
   token = value;
 }
+export function getToken() {
+  return token;
+}
 
 async function request(path, { method = 'GET', body } = {}) {
   let res;
@@ -22,7 +25,9 @@ async function request(path, { method = 'GET', body } = {}) {
   }
   const data = await res.json().catch(() => ({}));
   if (!res.ok) {
-    throw new Error(typeof data.detail === 'string' ? data.detail : 'Проверь введённые данные');
+    const err = new Error(typeof data.detail === 'string' ? data.detail : 'Проверь введённые данные');
+    err.status = res.status; // 403 = аккаунт заблокирован
+    throw err;
   }
   return data;
 }
@@ -38,6 +43,11 @@ export const api = {
   register: (name, email, password) =>
     request('/api/m/register', { method: 'POST', body: { name, email, password } }),
   me: () => request('/api/m/me'),
+  // апелляции: у заблокированного нет токена, поэтому вместо него email и пароль
+  appealStatus: (email, password) =>
+    request('/api/m/appeals/status', { method: 'POST', body: { email, password } }),
+  sendAppeal: (email, password, text) =>
+    request('/api/m/appeals', { method: 'POST', body: { email, password, text } }),
   user: (id) => request('/api/m/users/' + id),
 
   feed: (q = '') => request('/api/m/feed?q=' + encodeURIComponent(q)),
@@ -53,6 +63,12 @@ export const api = {
   review: (userId, rating, text) =>
     request(`/api/m/users/${userId}/reviews`, { method: 'POST', body: { rating, text } }),
   categories: () => request('/api/categories'),
+
+  // уведомления: after - id последнего уже полученного (без него вернётся только last_id)
+  notifications: (after) =>
+    request('/api/m/notifications' + (after != null ? '?after=' + after : '')),
+  readNotifications: (kinds) =>
+    request('/api/m/notifications/read', { method: 'POST', body: { kinds } }),
 
   favorites: () => request('/api/m/favorites'),
   toggleFavorite: (id) => request('/api/m/favorites/' + id, { method: 'POST' }),
