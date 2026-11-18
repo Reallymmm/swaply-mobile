@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, TextInput, Pressable, StyleSheet, ScrollView, KeyboardAvoidingView, Platform, Alert } from 'react-native';
+import { View, Text, TextInput, Image, Pressable, StyleSheet, ScrollView, KeyboardAvoidingView, Platform, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import Avatar from '../components/Avatar';
 import Button from '../components/Button';
 import { api, setToken } from '../api';
 import { colors, radius } from '../theme';
@@ -100,7 +99,7 @@ export default function LoginScreen({ navigation }) {
     <SafeAreaView style={styles.safe}>
       <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
         <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
-          <Avatar letter="S" size={90} dark />
+          <Image source={require('../../assets/logo.png')} style={styles.logoImage} resizeMode="contain" />
           <Text style={styles.logo}>Swaply</Text>
           <Text style={styles.subtitle}>Обмен вещами без денег</Text>
 
@@ -205,6 +204,7 @@ export default function LoginScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
+  logoImage: { width: 110, height: 110 },
   safe: { flex: 1, backgroundColor: colors.white },
   container: { flexGrow: 1, alignItems: 'center', justifyContent: 'center', padding: 24 },
   logo: { fontSize: 30, fontWeight: '800', marginTop: 14 },

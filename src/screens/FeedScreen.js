@@ -1,5 +1,5 @@
-import React, { useState, useCallback } from 'react';
-import { View, Text, TextInput, FlatList, Pressable, StyleSheet, Alert } from 'react-native';
+import React, { useState, useCallback, useEffect } from 'react';
+import { View, Text, TextInput, FlatList, Pressable, StyleSheet, Alert, Modal } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
@@ -12,14 +12,22 @@ export default function FeedScreen({ navigation }) {
   const [text, setText] = useState(''); // что набрано в поиске
   const [query, setQuery] = useState(''); // что реально ищем (после нажатия "поиск")
   const [refreshing, setRefreshing] = useState(false);
+  const [categories, setCategories] = useState([]);
+  const [categoryId, setCategoryId] = useState(null); // применённый фильтр
+  const [draftId, setDraftId] = useState(null); // выбор в окне, пока не нажали "Применить"
+  const [filterOpen, setFilterOpen] = useState(false);
+
+  useEffect(() => {
+    api.categories().then(setCategories).catch(() => {});
+  }, []);
 
   const load = useCallback(async () => {
     try {
-      setItems(await api.feed(query));
+      setItems(await api.feed(query, categoryId));
     } catch (e) {
       Alert.alert('Ошибка', e.message);
     }
-  }, [query]);
+  }, [query, categoryId]);
 
   // загружаем ленту каждый раз, когда экран открывается
   useFocusEffect(
@@ -65,10 +73,57 @@ export default function FeedScreen({ navigation }) {
             returnKeyType="search"
           />
         </View>
-        <Pressable style={styles.filter}>
-          <Text style={styles.filterText}>Фильтры</Text>
+        <Pressable
+          style={[styles.filter, categoryId != null && styles.filterActive]}
+          onPress={() => {
+            setDraftId(categoryId);
+            setFilterOpen(true);
+          }}
+        >
+          <Text style={[styles.filterText, categoryId != null && { color: colors.white }]}>
+            {categoryId != null ? 'Фильтры · 1' : 'Фильтры'}
+          </Text>
         </Pressable>
       </View>
+
+      <Modal visible={filterOpen} transparent animationType="slide" onRequestClose={() => setFilterOpen(false)}>
+        <Pressable style={styles.backdrop} onPress={() => setFilterOpen(false)}>
+          <Pressable style={styles.sheet} onPress={() => {}}>
+            <Text style={styles.sheetTitle}>Категория</Text>
+            <View style={styles.chips}>
+              <Pressable
+                style={[styles.chip, draftId == null && styles.chipActive]}
+                onPress={() => setDraftId(null)}
+              >
+                <Text style={[styles.chipText, draftId == null && { color: colors.white }]}>Все</Text>
+              </Pressable>
+              {categories.map((c) => (
+                <Pressable
+                  key={c.id}
+                  style={[styles.chip, draftId === c.id && styles.chipActive]}
+                  onPress={() => setDraftId(draftId === c.id ? null : c.id)}
+                >
+                  <Text style={[styles.chipText, draftId === c.id && { color: colors.white }]}>{c.name}</Text>
+                </Pressable>
+              ))}
+            </View>
+            <View style={styles.sheetButtons}>
+              <Pressable style={[styles.sheetBtn, styles.sheetBtnLight]} onPress={() => setDraftId(null)}>
+                <Text style={styles.sheetBtnLightText}>Сбросить</Text>
+              </Pressable>
+              <Pressable
+                style={[styles.sheetBtn, styles.sheetBtnDark]}
+                onPress={() => {
+                  setCategoryId(draftId);
+                  setFilterOpen(false);
+                }}
+              >
+                <Text style={styles.sheetBtnDarkText}>Применить</Text>
+              </Pressable>
+            </View>
+          </Pressable>
+        </Pressable>
+      </Modal>
 
       <FlatList
         data={items}
@@ -121,6 +176,20 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   filterText: { fontWeight: '600' },
+  filterActive: { backgroundColor: colors.black },
+  backdrop: { flex: 1, backgroundColor: 'rgba(0,0,0,0.4)', justifyContent: 'flex-end' },
+  sheet: { backgroundColor: colors.white, borderTopLeftRadius: 20, borderTopRightRadius: 20, padding: 20, paddingBottom: 32 },
+  sheetTitle: { fontSize: 18, fontWeight: '800', marginBottom: 14 },
+  chips: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
+  chip: { paddingHorizontal: 14, paddingVertical: 8, borderRadius: 20, borderWidth: 1.5, borderColor: colors.black },
+  chipActive: { backgroundColor: colors.black },
+  chipText: { fontWeight: '600', fontSize: 13 },
+  sheetButtons: { flexDirection: 'row', gap: 10, marginTop: 24 },
+  sheetBtn: { flex: 1, paddingVertical: 13, borderRadius: 10, alignItems: 'center' },
+  sheetBtnLight: { borderWidth: 1.5, borderColor: colors.black },
+  sheetBtnLightText: { fontWeight: '700' },
+  sheetBtnDark: { backgroundColor: colors.black },
+  sheetBtnDarkText: { fontWeight: '700', color: colors.white },
   list: { paddingHorizontal: 16, paddingBottom: 90, gap: 12 },
   empty: { textAlign: 'center', color: colors.muted, marginTop: 40 },
   fab: {

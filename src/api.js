@@ -55,7 +55,8 @@ export const api = {
     request('/api/m/appeals', { method: 'POST', body: { email, password, text } }),
   user: (id) => request('/api/m/users/' + id),
 
-  feed: (q = '') => request('/api/m/feed?q=' + encodeURIComponent(q)),
+  feed: (q = '', categoryId = null) =>
+    request('/api/m/feed?q=' + encodeURIComponent(q) + (categoryId != null ? '&category_id=' + categoryId : '')),
   listing: (id) => request('/api/m/listings/' + id),
   createListing: (data) => request('/api/m/listings', { method: 'POST', body: data }),
   updateListing: (id, data) => request('/api/m/listings/' + id, { method: 'PUT', body: data }),
