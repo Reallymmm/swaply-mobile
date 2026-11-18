@@ -15,10 +15,9 @@ import { colors } from '../theme';
 export default function ProfileScreen({ navigation }) {
   const [me, setMe] = useState(null);
   const [items, setItems] = useState([]);
-  const [profile, setProfile] = useState(null); // публичный профиль: рейтинг и отзывы
-  const { unreadOther } = useNotifications(); // непрочитанные уведомления для колокольчика
+  const [profile, setProfile] = useState(null);
+  const { unreadOther } = useNotifications();
 
-  // окно смены местоположения
   const [cityOpen, setCityOpen] = useState(false);
   const [cityDraft, setCityDraft] = useState('');
   const [savingCity, setSavingCity] = useState(false);
@@ -31,7 +30,6 @@ export default function ProfileScreen({ navigation }) {
       try {
         setProfile(await api.user(user.id));
       } catch (e) {
-        // рейтинг не критичен, остальной профиль показываем
       }
     } catch (e) {
       Alert.alert('Ошибка', e.message);
@@ -53,12 +51,11 @@ export default function ProfileScreen({ navigation }) {
     }
   }
 
-  // выбираем фото в галерее и ставим его на аватарку
   async function pickAvatar() {
     try {
       const res = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ['images'],
-        allowsEditing: true, // можно обрезать под квадрат
+        allowsEditing: true,
         aspect: [1, 1],
         quality: 0.5,
         base64: true,
@@ -97,7 +94,6 @@ export default function ProfileScreen({ navigation }) {
       <ScrollView contentContainerStyle={styles.content}>
         <View style={styles.titleRow}>
           <Text style={styles.title}>Профиль</Text>
-          {/* колокольчик: история уведомлений, на нём число непрочитанных */}
           <Pressable onPress={() => navigation.navigate('Notifications')} hitSlop={10}>
             <Ionicons name="notifications-outline" size={26} color={colors.black} />
             {unreadOther > 0 && (

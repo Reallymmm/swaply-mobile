@@ -5,29 +5,25 @@ import Button from '../components/Button';
 import { api, setToken } from '../api';
 import { colors, radius } from '../theme';
 
-const RESEND_SECONDS = 60; // через сколько можно запросить код ещё раз
+const RESEND_SECONDS = 60;
 
 export default function LoginScreen({ navigation }) {
-  // false = вкладка "Вход", true = "Регистрация" (только внешний вид)
   const [isRegister, setIsRegister] = useState(false);
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [busy, setBusy] = useState(false);
 
-  // второй шаг регистрации: ждём код из письма
   const [codeStep, setCodeStep] = useState(false);
   const [code, setCode] = useState('');
   const [cooldown, setCooldown] = useState(0);
 
-  // таймер до повторной отправки кода
   useEffect(() => {
     if (cooldown <= 0) return;
     const timer = setTimeout(() => setCooldown((c) => c - 1), 1000);
     return () => clearTimeout(timer);
   }, [cooldown]);
 
-  // вход: при успехе запоминаем токен и идём в ленту
   async function login() {
     setBusy(true);
     try {
@@ -36,7 +32,6 @@ export default function LoginScreen({ navigation }) {
       navigation.replace('Main');
     } catch (e) {
       if (e.status === 403) {
-        // аккаунт заблокирован: показываем причину и форму апелляции
         navigation.navigate('Blocked', { email: email.trim(), password });
       } else {
         Alert.alert('Не получилось', e.message);
@@ -46,7 +41,6 @@ export default function LoginScreen({ navigation }) {
     }
   }
 
-  // регистрация, шаг 1: отправляем данные, на почту приходит код
   async function sendCode() {
     if (!name.trim()) return Alert.alert('Не получилось', 'Введите имя');
     if (!email.includes('@')) return Alert.alert('Не получилось', 'Введите корректный email');
@@ -65,7 +59,6 @@ export default function LoginScreen({ navigation }) {
     }
   }
 
-  // регистрация, шаг 2: проверяем код, сервер создаёт аккаунт и сразу впускает
   async function confirmCode() {
     if (code.trim().length !== 6) return Alert.alert('Не получилось', 'Введите 6 цифр из письма');
     setBusy(true);
@@ -75,7 +68,6 @@ export default function LoginScreen({ navigation }) {
       navigation.replace('Main');
     } catch (e) {
       Alert.alert('Не получилось', e.message);
-      // если код больше не действует, возвращаем на форму
       if (e.status === 429 || /устарел|не найден/i.test(e.message)) setCodeStep(false);
     } finally {
       setBusy(false);

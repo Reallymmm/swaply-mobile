@@ -5,7 +5,6 @@ import Photo from './Photo';
 import { photoUrl } from '../api';
 import { colors, radius } from '../theme';
 
-// Карточка объявления для ленты
 export default function ListingCard({ item, onPress, onToggleFavorite }) {
   return (
     <Pressable style={styles.card} onPress={onPress}>

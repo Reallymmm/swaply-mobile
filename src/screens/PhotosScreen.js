@@ -3,7 +3,6 @@ import { View, Text, ScrollView, Image, Pressable, StyleSheet, useWindowDimensio
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 
-// Фотографии объявления на весь экран. Листаются пальцем влево-вправо.
 export default function PhotosScreen({ navigation, route }) {
   const { urls, index = 0 } = route.params;
   const { width, height } = useWindowDimensions();
@@ -11,7 +10,6 @@ export default function PhotosScreen({ navigation, route }) {
   const ref = useRef(null);
   const [page, setPage] = useState(index);
 
-  // сразу показываем то фото, на которое нажали
   useEffect(() => {
     const t = setTimeout(() => ref.current?.scrollTo({ x: index * width, animated: false }), 0);
     return () => clearTimeout(t);

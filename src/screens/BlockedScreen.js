@@ -10,8 +10,6 @@ import { formatDate } from '../utils';
 
 const APPEAL_NAMES = { pending: 'На рассмотрении', approved: 'Одобрена', rejected: 'Отклонена' };
 
-// Экран «Аккаунт заблокирован»: причина, форма апелляции и ответы администратора.
-// email и пароль приходят с экрана входа (токена у заблокированного нет).
 export default function BlockedScreen({ navigation, route }) {
   const { email, password } = route.params;
   const [info, setInfo] = useState(null);
@@ -22,7 +20,6 @@ export default function BlockedScreen({ navigation, route }) {
     try {
       setInfo(await api.appealStatus(email, password));
     } catch (e) {
-      // например, администратор уже снял блокировку
       Alert.alert('Не получилось', e.message, [{ text: 'OK', onPress: () => navigation.goBack() }]);
     }
   }

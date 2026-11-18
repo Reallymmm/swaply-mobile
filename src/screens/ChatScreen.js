@@ -17,11 +17,9 @@ export default function ChatScreen({ navigation, route }) {
     try {
       setChat(await api.chat(chatId));
     } catch (e) {
-      // молча пропускаем: следующая попытка будет через пару секунд
     }
   }, [chatId]);
 
-  // новые сообщения подтягиваем каждые 3 секунды
   useEffect(() => {
     load();
     const timer = setInterval(load, 3000);
@@ -53,7 +51,6 @@ export default function ChatScreen({ navigation, route }) {
 
       <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
         {chat && (
-          // нажатие на карточку открывает объявление, о котором этот чат
           <Pressable
             style={({ pressed }) => [styles.listing, pressed && { opacity: 0.7 }]}
             onPress={() => navigation.navigate('Listing', { id: chat.listing_id })}

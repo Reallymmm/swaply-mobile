@@ -2,7 +2,6 @@ import React from 'react';
 import { Pressable, Text, StyleSheet } from 'react-native';
 import { colors, radius } from '../theme';
 
-// variant: 'primary' (чёрная) или 'outline' (с рамкой)
 export default function Button({ title, onPress, variant = 'primary', small = false, disabled = false, style }) {
   const outline = variant === 'outline';
   return (

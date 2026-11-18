@@ -7,9 +7,8 @@ import Button from '../components/Button';
 import { api, photoUrl } from '../api';
 import { colors, radius } from '../theme';
 
-// Один и тот же экран для создания и редактирования
 export default function CreateListingScreen({ navigation, route }) {
-  const editing = route.params?.listing; // если пришло объявление - значит редактируем
+  const editing = route.params?.listing;
 
   const [title, setTitle] = useState(editing?.title ?? '');
   const [description, setDescription] = useState(editing?.description ?? '');
@@ -18,7 +17,6 @@ export default function CreateListingScreen({ navigation, route }) {
   const [categories, setCategories] = useState([]);
   const [busy, setBusy] = useState(false);
 
-  // фотографии: existing - уже загружены на сервер, picked - только что выбраны, removed - пометили на удаление
   const [existing, setExisting] = useState(editing?.photos ?? []);
   const [picked, setPicked] = useState([]);
   const [removed, setRemoved] = useState([]);
@@ -29,7 +27,6 @@ export default function CreateListingScreen({ navigation, route }) {
     api.categories().then(setCategories).catch(() => {});
   }, []);
 
-  // открываем галерею телефона и добавляем выбранные фото
   async function pickPhotos() {
     const left = MAX_PHOTOS - total;
     if (left <= 0) {
@@ -41,8 +38,8 @@ export default function CreateListingScreen({ navigation, route }) {
         mediaTypes: ['images'],
         allowsMultipleSelection: true,
         selectionLimit: left,
-        quality: 0.5, // сжимаем, чтобы фото быстрее загружались
-        base64: true, // так фото уходит на сервер вместе с обычным запросом
+        quality: 0.5,
+        base64: true,
       });
       if (res.canceled) return;
       const added = res.assets.filter((a) => a.base64).map((a) => ({ uri: a.uri, base64: a.base64 }));
@@ -74,7 +71,6 @@ export default function CreateListingScreen({ navigation, route }) {
         listingId = created.id;
       }
 
-      // фото: сначала удаляем помеченные, потом загружаем новые по одной
       let failed = 0;
       for (const id of removed) {
         try {

@@ -16,7 +16,6 @@ export default function FavoritesScreen({ navigation }) {
     }, [])
   );
 
-  // повторное нажатие на сердечко убирает объявление из избранного
   async function remove(id) {
     try {
       await api.toggleFavorite(id);

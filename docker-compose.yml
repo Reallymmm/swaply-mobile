@@ -1,0 +1,14 @@
+services:
+  mobile:
+    build: .
+    tty: true
+    stdin_open: true
+    ports:
+      - "8081:8081"
+    volumes:
+      - ./src:/app/src
+      - ./App.js:/app/App.js
+    environment:
+      REACT_NATIVE_PACKAGER_HOSTNAME: ${HOST_IP:?Create .env with HOST_IP=your_computer_ip}
+      CHOKIDAR_USEPOLLING: "true"
+      WATCHPACK_POLLING: "true"

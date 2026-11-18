@@ -7,14 +7,12 @@ import { api } from '../api';
 import { formatDateTime } from '../utils';
 import { colors } from '../theme';
 
-// Иконка по типу уведомления (такие же, как на всплывающей плашке)
 function iconFor(kind) {
   if (kind === 'message') return 'chatbubble';
   if (kind === 'listing_approved') return 'checkmark-circle';
   return 'alert-circle';
 }
 
-// История уведомлений: сообщения и решения модерации, новые сверху
 export default function NotificationsScreen({ navigation }) {
   const [items, setItems] = useState([]);
   const [hasMore, setHasMore] = useState(false);
@@ -27,7 +25,6 @@ export default function NotificationsScreen({ navigation }) {
       const res = await api.notificationsHistory();
       setItems(res.items);
       setHasMore(res.has_more);
-      // открыли историю - значит, уведомления (кроме сообщений) прочитаны; сообщения читаются в чатах
       api.readNotifications(['other']).catch(() => {});
     } catch (e) {
       Alert.alert('Ошибка', e.message);
@@ -43,7 +40,6 @@ export default function NotificationsScreen({ navigation }) {
     }, [load])
   );
 
-  // догружаем старые уведомления, когда долистали до конца
   async function loadMore() {
     if (!hasMore || loadingMore || items.length === 0) return;
     setLoadingMore(true);
@@ -52,7 +48,6 @@ export default function NotificationsScreen({ navigation }) {
       setItems((prev) => [...prev, ...res.items]);
       setHasMore(res.has_more);
     } catch (e) {
-      // попробуем при следующей прокрутке
     } finally {
       setLoadingMore(false);
     }

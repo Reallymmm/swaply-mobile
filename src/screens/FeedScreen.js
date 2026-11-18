@@ -9,12 +9,12 @@ import { colors } from '../theme';
 
 export default function FeedScreen({ navigation }) {
   const [items, setItems] = useState([]);
-  const [text, setText] = useState(''); // что набрано в поиске
-  const [query, setQuery] = useState(''); // что реально ищем (после нажатия "поиск")
+  const [text, setText] = useState('');
+  const [query, setQuery] = useState('');
   const [refreshing, setRefreshing] = useState(false);
   const [categories, setCategories] = useState([]);
-  const [categoryId, setCategoryId] = useState(null); // применённый фильтр
-  const [draftId, setDraftId] = useState(null); // выбор в окне, пока не нажали "Применить"
+  const [categoryId, setCategoryId] = useState(null);
+  const [draftId, setDraftId] = useState(null);
   const [filterOpen, setFilterOpen] = useState(false);
 
   useEffect(() => {
@@ -29,7 +29,6 @@ export default function FeedScreen({ navigation }) {
     }
   }, [query, categoryId]);
 
-  // загружаем ленту каждый раз, когда экран открывается
   useFocusEffect(
     useCallback(() => {
       load();

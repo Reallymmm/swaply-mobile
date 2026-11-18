@@ -2,7 +2,6 @@ import React from 'react';
 import { View, Text, Image } from 'react-native';
 import { colors } from '../theme';
 
-// Круг с фотографией (если передан uri) или с буквой
 export default function Avatar({ letter, size = 44, dark = false, uri }) {
   if (uri) {
     return (

@@ -6,13 +6,12 @@ import { api, getToken } from './api';
 import { navigationRef } from './navigation/ref';
 import { colors, radius } from './theme';
 
-const POLL_MS = 6000;   // как часто спрашиваем сервер, пока приложение открыто
-const SHOW_MS = 4500;   // сколько висит плашка
+const POLL_MS = 6000;
+const SHOW_MS = 4500;
 
 const Ctx = createContext({ unreadMessages: 0, unreadOther: 0 });
 export const useNotifications = () => useContext(Ctx);
 
-// Опрашивает сервер, показывает плашку сверху и считает непрочитанные для значков на вкладках
 export function NotificationsProvider({ children }) {
   const insets = useSafeAreaInsets();
   const [unread, setUnread] = useState({ messages: 0, other: 0 });
@@ -39,7 +38,6 @@ export function NotificationsProvider({ children }) {
   const poll = useCallback(async () => {
     const token = getToken();
     if (token !== lastToken.current) {
-      // вышли или зашли под другим аккаунтом - начинаем заново
       lastToken.current = token;
       lastId.current = null;
       setUnread({ messages: 0, other: 0 });
@@ -52,9 +50,8 @@ export function NotificationsProvider({ children }) {
 
       const route = navigationRef.isReady() ? navigationRef.getCurrentRoute() : null;
       const inChat = route?.name === 'Chat' || route?.name === 'Chats';
-      const inHistory = route?.name === 'Notifications'; // экран истории (колокольчик в профиле)
+      const inHistory = route?.name === 'Notifications';
 
-      // сообщение из чата, который открыт прямо сейчас, не показываем
       const fresh = res.items.filter(
         (n) => !(n.kind === 'message' && route?.name === 'Chat' && route.params?.chatId === n.chat_id)
       );
@@ -71,7 +68,6 @@ export function NotificationsProvider({ children }) {
       }
       setUnread({ messages: m, other: o });
     } catch (e) {
-      // нет связи или аккаунт заблокирован - просто пробуем в следующий раз
     }
   }, [showBanner]);
 

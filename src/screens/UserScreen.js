@@ -10,12 +10,10 @@ import { api, photoUrl } from '../api';
 import { formatDate, ratingText } from '../utils';
 import { colors } from '../theme';
 
-// Профиль пользователя: данные, рейтинг, отзывы и его объявления
 export default function UserScreen({ navigation, route }) {
   const { id } = route.params;
   const [user, setUser] = useState(null);
 
-  // загружаем каждый раз, когда экран открывается (в том числе после написания отзыва)
   useFocusEffect(
     useCallback(() => {
       api

@@ -1,6 +1,5 @@
 import { API_URL } from './config';
 
-// Токен хранится в памяти: после входа он добавляется ко всем запросам
 let token = null;
 export function setToken(value) {
   token = value;
@@ -26,21 +25,18 @@ async function request(path, { method = 'GET', body } = {}) {
   const data = await res.json().catch(() => ({}));
   if (!res.ok) {
     const err = new Error(typeof data.detail === 'string' ? data.detail : 'Проверь введённые данные');
-    err.status = res.status; // 403 = аккаунт заблокирован
+    err.status = res.status;
     throw err;
   }
   return data;
 }
 
-// Из пути вида /uploads/abc.jpg делаем полный адрес для картинки
 export function photoUrl(path) {
   return path ? API_URL + path : null;
 }
 
-// Все запросы к серверу собраны здесь
 export const api = {
   login: (email, password) => request('/api/m/login', { method: 'POST', body: { email, password } }),
-  // регистрация в три шага: данные -> код на почту -> подтверждение кода (тогда создаётся аккаунт)
   register: (name, email, password) =>
     request('/api/m/register', { method: 'POST', body: { name, email, password } }),
   resendCode: (email) => request('/api/m/register/resend', { method: 'POST', body: { email } }),
@@ -48,7 +44,6 @@ export const api = {
     request('/api/m/register/confirm', { method: 'POST', body: { email, code } }),
   me: () => request('/api/m/me'),
   setCity: (city) => request('/api/m/me/city', { method: 'PUT', body: { city } }),
-  // апелляции: у заблокированного нет токена, поэтому вместо него email и пароль
   appealStatus: (email, password) =>
     request('/api/m/appeals/status', { method: 'POST', body: { email, password } }),
   sendAppeal: (email, password, text) =>
@@ -70,10 +65,8 @@ export const api = {
     request(`/api/m/users/${userId}/reviews`, { method: 'POST', body: { rating, text } }),
   categories: () => request('/api/categories'),
 
-  // уведомления: after - id последнего уже полученного (без него вернётся только last_id)
   notifications: (after) =>
     request('/api/m/notifications' + (after != null ? '?after=' + after : '')),
-  // история: before - id самого старого из уже загруженных (для подгрузки следующей страницы)
   notificationsHistory: (before) =>
     request('/api/m/notifications/history' + (before != null ? '?before=' + before : '')),
   readNotifications: (kinds) =>

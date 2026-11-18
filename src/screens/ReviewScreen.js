@@ -6,9 +6,8 @@ import Button from '../components/Button';
 import { api } from '../api';
 import { colors } from '../theme';
 
-// Отзыв о продавце: оценка звёздами и текст
 export default function ReviewScreen({ navigation, route }) {
-  const { userId, name, current } = route.params; // current - прежний отзыв, если он уже есть
+  const { userId, name, current } = route.params;
   const [rating, setRating] = useState(current?.rating ?? 0);
   const [text, setText] = useState(current?.text ?? '');
   const [busy, setBusy] = useState(false);

@@ -12,9 +12,9 @@ import { colors } from '../theme';
 export default function ListingScreen({ navigation, route }) {
   const { id } = route.params;
   const [item, setItem] = useState(null);
-  const [page, setPage] = useState(0); // номер фото, которое сейчас на экране
+  const [page, setPage] = useState(0);
   const { width } = useWindowDimensions();
-  const photoWidth = width - 32; // ширина экрана минус поля по 16 слева и справа
+  const photoWidth = width - 32;
 
   useEffect(() => {
     api
@@ -35,7 +35,6 @@ export default function ListingScreen({ navigation, route }) {
     }
   }
 
-  // создаём чат (или открываем существующий) и переходим в него
   async function writeToAuthor() {
     try {
       const chat = await api.openChat(item.id);
@@ -45,7 +44,6 @@ export default function ListingScreen({ navigation, route }) {
     }
   }
 
-  // открываем фотографии на весь экран, начиная с той, на которую нажали
   function openPhotos(index) {
     navigation.navigate('Photos', { urls: item.photos.map((p) => photoUrl(p.url)), index });
   }

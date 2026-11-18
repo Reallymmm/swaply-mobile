@@ -12,11 +12,9 @@ import { useNotifications } from '../notifications';
 
 const Tab = createBottomTabNavigator();
 
-// Своя иконка для вкладки "Лента": чёрная - когда открыта, серая - когда нет
 const feedActive = require('../../assets/feed-active.png');
 const feedInactive = require('../../assets/feed-inactive.png');
 
-// Для кнопки "Добавить" экран не нужен, поэтому пустая заглушка
 const Empty = () => null;
 
 function icon(outline, filled) {
@@ -68,7 +66,6 @@ export default function Tabs() {
         }}
         listeners={({ navigation }) => ({
           tabPress: (e) => {
-            // не открываем вкладку, а показываем экран создания
             e.preventDefault();
             navigation.navigate('CreateListing');
           },
