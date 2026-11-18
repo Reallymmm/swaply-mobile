@@ -13,6 +13,7 @@ import UserScreen from './src/screens/UserScreen';
 import ReviewScreen from './src/screens/ReviewScreen';
 import PhotosScreen from './src/screens/PhotosScreen';
 import BlockedScreen from './src/screens/BlockedScreen';
+import NotificationsScreen from './src/screens/NotificationsScreen';
 import { navigationRef } from './src/navigation/ref';
 import { NotificationsProvider } from './src/notifications';
 
@@ -35,6 +36,7 @@ export default function App() {
             options={{ presentation: 'modal' }}
           />
           <Stack.Screen name="Chat" component={ChatScreen} />
+          <Stack.Screen name="Notifications" component={NotificationsScreen} />
           <Stack.Screen name="User" component={UserScreen} />
           <Stack.Screen name="Review" component={ReviewScreen} options={{ presentation: 'modal' }} />
           <Stack.Screen

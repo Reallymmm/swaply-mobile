@@ -4,7 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import Avatar from '../components/Avatar';
 import Photo from '../components/Photo';
-import { api } from '../api';
+import { api, photoUrl } from '../api';
 import { colors } from '../theme';
 
 export default function ChatScreen({ navigation, route }) {
@@ -53,13 +53,19 @@ export default function ChatScreen({ navigation, route }) {
 
       <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
         {chat && (
-          <View style={styles.listing}>
-            <Photo style={styles.listingPhoto} size={18} />
+          // нажатие на карточку открывает объявление, о котором этот чат
+          <Pressable
+            style={({ pressed }) => [styles.listing, pressed && { opacity: 0.7 }]}
+            onPress={() => navigation.navigate('Listing', { id: chat.listing_id })}
+          >
+            <Photo style={styles.listingPhoto} size={18} uri={photoUrl(chat.listing_cover)} />
             <View style={{ flex: 1 }}>
               <Text style={styles.listingTitle} numberOfLines={1}>{chat.listing_title}</Text>
               <Text style={styles.listingWant} numberOfLines={1}>Хочу: {chat.listing_want || 'не указано'}</Text>
+              <Text style={styles.listingOpen}>Открыть объявление</Text>
             </View>
-          </View>
+            <Ionicons name="chevron-forward" size={18} color={colors.muted} />
+          </Pressable>
         )}
 
         <FlatList
@@ -119,6 +125,7 @@ const styles = StyleSheet.create({
   listingPhoto: { width: 40, height: 40, borderRadius: 6 },
   listingTitle: { fontWeight: '700', fontSize: 13 },
   listingWant: { color: colors.muted, fontSize: 12, marginTop: 2 },
+  listingOpen: { color: colors.black, fontSize: 12, fontWeight: '700', marginTop: 3 },
   messages: { paddingHorizontal: 12, paddingBottom: 10, gap: 10 },
   bubble: { maxWidth: '75%', paddingVertical: 10, paddingHorizontal: 14, borderRadius: 14 },
   their: { alignSelf: 'flex-start', backgroundColor: colors.gray, borderWidth: 1, borderColor: colors.border },

@@ -52,7 +52,7 @@ export function NotificationsProvider({ children }) {
 
       const route = navigationRef.isReady() ? navigationRef.getCurrentRoute() : null;
       const inChat = route?.name === 'Chat' || route?.name === 'Chats';
-      const inProfile = route?.name === 'Profile';
+      const inHistory = route?.name === 'Notifications'; // экран истории (колокольчик в профиле)
 
       // сообщение из чата, который открыт прямо сейчас, не показываем
       const fresh = res.items.filter(
@@ -65,7 +65,7 @@ export function NotificationsProvider({ children }) {
         api.readNotifications(['message']).catch(() => {});
         m = 0;
       }
-      if (inProfile && o > 0) {
+      if (inHistory && o > 0) {
         api.readNotifications(['other']).catch(() => {});
         o = 0;
       }

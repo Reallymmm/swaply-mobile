@@ -40,9 +40,14 @@ export function photoUrl(path) {
 // Все запросы к серверу собраны здесь
 export const api = {
   login: (email, password) => request('/api/m/login', { method: 'POST', body: { email, password } }),
+  // регистрация в три шага: данные -> код на почту -> подтверждение кода (тогда создаётся аккаунт)
   register: (name, email, password) =>
     request('/api/m/register', { method: 'POST', body: { name, email, password } }),
+  resendCode: (email) => request('/api/m/register/resend', { method: 'POST', body: { email } }),
+  confirmRegister: (email, code) =>
+    request('/api/m/register/confirm', { method: 'POST', body: { email, code } }),
   me: () => request('/api/m/me'),
+  setCity: (city) => request('/api/m/me/city', { method: 'PUT', body: { city } }),
   // апелляции: у заблокированного нет токена, поэтому вместо него email и пароль
   appealStatus: (email, password) =>
     request('/api/m/appeals/status', { method: 'POST', body: { email, password } }),
@@ -67,6 +72,9 @@ export const api = {
   // уведомления: after - id последнего уже полученного (без него вернётся только last_id)
   notifications: (after) =>
     request('/api/m/notifications' + (after != null ? '?after=' + after : '')),
+  // история: before - id самого старого из уже загруженных (для подгрузки следующей страницы)
+  notificationsHistory: (before) =>
+    request('/api/m/notifications/history' + (before != null ? '?before=' + before : '')),
   readNotifications: (kinds) =>
     request('/api/m/notifications/read', { method: 'POST', body: { kinds } }),
 
